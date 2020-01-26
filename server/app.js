@@ -9,7 +9,7 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-// @NOTE when these requests get larger, they should be
+// @TODO when these requests get larger, they should be
 // paginated with `.findAll().paginate({ limit, page })`
 app.get('/employee', async (req, res) => {
   const employees = await Employee.findAll();
