@@ -27,14 +27,23 @@ const RESET = `
 	}
 
 	ol,
-	ul {
+	ul, {
 		list-style: none;
     padding: 0;
+	}
+	
+	li {
+	  list-style: none;
 	}
 
 	img {
 		max-width: 100%;
 		height: auto;
+	}
+	
+	a,
+	button {
+	  cursor: pointer;
 	}
 `;
 
