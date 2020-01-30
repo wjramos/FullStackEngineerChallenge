@@ -86,7 +86,7 @@ export default function Employees() {
 
       <h1>Employee Directory</h1>
 
-      {reviews.some(review => review.assignedId === user) && (
+      {(user === 'admin' || reviews.some(review => review.assignedId === user)) && (
         <h2>Pending reviews: <RouteLink to="/review">Click here to complete</RouteLink></h2>
       )}
 
