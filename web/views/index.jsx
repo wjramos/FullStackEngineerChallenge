@@ -7,9 +7,10 @@ import {
 } from "react-router-dom";
 
 import Employees from "./Employees";
-import { UserContext } from "../App";
 import Reviews from "./Reviews";
 import Button from "../components/Button"
+import Employee from "./Employee";
+import UserContext from "../context/UserContext";
 
 function Login() {
   const { user, setUser } = useContext(UserContext);
@@ -58,31 +59,27 @@ function PrivateRoute({ children, ...rest }) {
 }
 
 export default function AppRouter() {
-  const { setUser } = useContext(UserContext);
-
   return (
-    <Router>
-      <Switch>
-        <PrivateRoute path="/employee/:employeeId">
-          {/*<Employee />*/}
-        </PrivateRoute>
+    <Switch>
+      <PrivateRoute path="/employee/:employeeId">
+        <Employee />
+      </PrivateRoute>
 
-        <PrivateRoute path="/employee">
-          <Employees />
-        </PrivateRoute>
+      <PrivateRoute path="/employee">
+        <Employees />
+      </PrivateRoute>
 
-        <PrivateRoute path="/review/:reviewId">
-          {/*<Review />*/}
-        </PrivateRoute>
+      <PrivateRoute path="/review/:reviewId">
+        {/*<Review />*/}
+      </PrivateRoute>
 
-        <PrivateRoute path="/review">
-          <Reviews />
-        </PrivateRoute>
+      <PrivateRoute path="/review">
+        <Reviews />
+      </PrivateRoute>
 
-        <Route path="/login">
-          <Login />
-        </Route>
-      </Switch>
-    </Router>
+      <Route path="/login">
+        <Login />
+      </Route>
+    </Switch>
   );
 }

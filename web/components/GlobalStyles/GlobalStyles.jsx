@@ -27,9 +27,9 @@ const RESET = `
 	}
 
 	ol,
-	ul, {
+	ul {
 		list-style: none;
-    padding: 0;
+    padding-left: 0;
 	}
 	
 	li {
@@ -39,6 +39,10 @@ const RESET = `
 	img {
 		max-width: 100%;
 		height: auto;
+	}
+	
+	a {
+	  text-decoration: none;
 	}
 	
 	a,

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {createRef, useState} from 'react';
 import styled from '@emotion/styled';
 
 const Tooltip = styled.div`
@@ -25,12 +25,13 @@ const Label = styled.label`
     left: 0;
     background-color: #ccc;
     height: 3px;
+    
+    transition: background-color 0.1s ease-in-out;
   }
   
   &:focus-within {
     &:after {
       background-color: #333;
-      height: 5px;
     }
   }
 `;
@@ -66,9 +67,10 @@ export default function Input({ label, type, onChange, onFocus, onBlur, tooltip,
   const [focused, setFocus] = useState(false);
 
   const InputComponent = rows && rows > 1 ? TextAreaBase : InputBase;
+  const containerRef = createRef();
 
   return (
-    <Label>
+    <Label ref={containerRef}>
       <LabelText>
         {label}
       </LabelText>
@@ -83,10 +85,11 @@ export default function Input({ label, type, onChange, onFocus, onBlur, tooltip,
           if (onFocus) onFocus();
         }}
         onBlur={({ target }) => {
-          // @TODO need to detect whether target is within label ref
-          // setFocus(false);
+          if (!containerRef.current.contains(target)) {
+            setFocus(false);
 
-          if (onBlur) onBlur(target.value);
+            if (onBlur) onBlur(target.value);
+          }
         }}
       />
 

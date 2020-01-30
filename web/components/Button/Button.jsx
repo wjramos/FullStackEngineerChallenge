@@ -14,7 +14,6 @@ const ButtonBase = styled.button`
   font-weight: 900;
   font-size: 16px;
   transition: 0.25s ease-in-out background-color;
-  margin: 16px auto;
   white-space: nowrap;
   
   &:hover {
@@ -27,8 +26,16 @@ const ButtonBase = styled.button`
   }
 `;
 
-export default function Button(props) {
+export default function Button({ onClick, ...restProps }) {
   return (
-    <ButtonBase {...props} />
+    <ButtonBase
+      {...restProps}
+      onClick={e => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        onClick();
+      }}
+    />
   );
 }

@@ -12,118 +12,135 @@ app.use(bodyParser.json());
 // @TODO when these requests get larger, they should be
 // paginated with `.findAll().paginate({ limit, page })`
 app.get('/employee', async (req, res) => {
-  const employees = await Employee.findAll();
+  try {
+    const employees = await Employee.findAll();
 
-  return res.json(employees);
+    return res.json(employees);
+  } catch(e) {
+    res.end(404).send('No employees found');
+  }
 });
 
-app.get('/employee/:employeeId', async (req, res) => {
-  const { employeeId } = req.params;
+app.get('/employee/:id', async (req, res) => {
+  const { id } = req.params;
 
-  const employee = await Employee.findAll({
-    where: {
-      id: employeeId,
-    }
-  });
+  try {
+    const employee = await Employee.findOne({
+      where: { id },
+    });
 
-  return res.json(employee[0]);
-});
-
-app.post('/employee', async (req, res) => {
-  const employee = await Employee.create({ ...req.body });
-
-  res.send(employee);
+    return res.json(employee);
+  } catch(e) {
+    res.end(404).send('No employee found');
+  }
 });
 
 app.put('/employee', async (req, res) => {
-  const { employeeId } = req.body;
+  const { id } = req.body;
 
-  const [, affectedRows] = await Employee.update(
-    { ...req.body },
-    {
-      where: {
-        id: employeeId,
-      },
-      returning: true,
-      plain: true,
-    },
-  );
+  try {
+    let employee;
 
-  res.send(affectedRows[0]);
+    if (id) {
+      // Update
+      await Employee.upsert(
+        req.body,
+        { where: { id } },
+      );
+
+      employee = await Employee.findOne({
+        where: { id },
+      });
+    } else {
+      // Insert
+      employee = await Employee.create(req.body);
+    }
+
+    res.json(employee);
+  } catch(e) {
+    res.end(404).send('No employee found');
+  }
 });
 
 app.delete('/employee', async (req, res) => {
-  const { employeeId } = req.body;
+  const { employeeId: id } = req.body;
 
-  const affectedRows = await Employee.destroy({
-    where: {
-      id: employeeId,
-    },
-  });
+  try {
+    await Employee.destroy({
+      where: { id },
+    });
 
-  console.warn(`${affectedRows} destroyed.`);
-
-  res.send();
+    res.json({});
+  } catch(e) {
+    res.end(404).send('No employee found');
+  }
 });
 
 app.get('/employee/:employeeId', async (req, res) => {
-  const { employeeId } = req.params;
+  const { employeeId: id } = req.params;
 
-  const employee = await Employee.findAll({
-    where: {
-      id: employeeId,
-    },
-  });
+  try {
+    const employee = await Employee.findOne({
+      where: { id },
+    });
 
-  return res.json(employee);
+    return res.json(employee);
+  } catch(e) {
+    res.end(404).send('No employee found');
+  }
 });
 
 app.get('/review', async (req, res) => {
   const { assignedId } = req.query;
 
-  const reviews = await Review.findAll({
-    where: {
-      assignedId,
-    },
-  });
+  try {
+    const reviews = await Review.findAll({
+      where: { assignedId },
+    });
 
-  return res.json(reviews);
+    return res.json(reviews);
+  } catch(e) {
+    res.end(404).send('No reviews found');
+  }
 });
 
 app.get('/review/:employeeId', async (req, res) => {
   const { employeeId } = req.params;
+  const { assignedId } = req.query;
 
-  const reviews = await Review.findAll({
-    where: {
-      employeeId,
-    },
-  });
-
-  return res.json(reviews);
-});
-
-app.post('/review', async (req, res) => {
-  const review = await Review.create({ ...req.body });
-
-  res.send(review);
-});
-
-app.put('/review', async (req, res) => {
-  const { employeeId, assignedId } = req.body;
-
-  const [, affectedRows] = await Review.update(
-    { ...req.body },
-    {
+  try {
+    const reviews = await Review.findAll({
       where: {
         employeeId,
-        assignedId,
+        ...(assignedId ? { assignedId } : {}),
       },
-      returning: true,
-      plain: true,
-    },
-  );
+    });
 
-  res.send(affectedRows[0]);
+    return res.json(reviews);
+  } catch (e) {
+    res.end(404).send('No reviews found');
+  }
+});
+
+app.patch('/review', async (req, res) => {
+  const { employeeId, assignedId } = req.body;
+
+  try {
+    await Review.update(
+      req.body,
+      {
+        where: { employeeId, assignedId },
+      },
+    );
+
+    const { dataValues: review } = await Review.findOne({
+      where: { employeeId, assignedId },
+    });
+
+    res.send(review);
+  } catch (e) {
+    res.end(404).send('No reviews found');
+  }
 });
 
 module.exports = app;

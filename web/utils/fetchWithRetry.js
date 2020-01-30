@@ -1,24 +1,27 @@
-export default function fetchWithRetry(url, config = {}) {
-  return new Promise(async (resolve, reject) => {
+export default function fetchWithRetry(url, method = 'GET', body = {}) {
+  const config = method === 'GET' ? undefined : {
+    method: method.toUpperCase(),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  };
+
+  return new Promise((resolve, reject) => {
     async function fetchData() {
       const response = await fetch(url, config);
       const result = await response.json();
 
-      resolve(result);
+      return result;
     }
 
-    try {
-      await fetchData();
-    } catch (error) {
-      console.error(error, 'Retrying request…');
+    fetchData.then(resolve).catch(() => {
+      console.info('Retrying request…');
 
-      setTimeout(async () => {
-        try {
-          await fetchData();
-        } catch(e) {
-          reject('Could not retrieve data');
-        }
+      // Try request again after half a second
+      setTimeout(() => {
+        fetchData.then(resolve).catch(reject);
       }, 500);
-    }
+    });
   });
 }

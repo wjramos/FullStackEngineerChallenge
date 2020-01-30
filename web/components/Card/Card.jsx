@@ -12,18 +12,19 @@ const CardBoundary = styled.div`
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 10px 25px rgba(79, 82, 177, 0.35);
-  display: inline-flex;
+  display: flex;
   flex-direction: column;
   text-align: center;
   border-radius: ${CARD_RADIUS};
   width: 100%;
+  margin: auto;
 `;
 
 const Header = styled.header`
 `;
 
 const Content = styled.main`
-  padding: 8px;
+  padding: 16px;
 `;
 
 // @NOTE Radii set here because overflow: hidden can not be set on card boundary
@@ -34,10 +35,10 @@ const Footer = styled.footer`
   border-bottom-right-radius: ${CARD_RADIUS};
 `;
 
-export default function Card({ header, children, footer }) {
+export default function Card({ header, children, footer, ...restProps }) {
   return (
     <CardContainer>
-      <CardBoundary>
+      <CardBoundary {...restProps}>
         {header && (
           <Header>
             {header}

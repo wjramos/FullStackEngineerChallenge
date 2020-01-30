@@ -1,35 +1,32 @@
 import React from 'react';
-import { useTrail, animated } from 'react-spring';
+import { Trail } from 'react-spring/renderprops'
 
-const config = { mass: 5, tension: 2000, friction: 200 };
+import { animated } from 'react-spring';
 
-export default function AnimatedList({ children = [], ...restProps }) {
-  const trail = useTrail(children.length, {
-    config,
-    opacity: 1,
-    x: 0,
-    height: 'auto',
-    from: {
-      opacity: 0,
-      x: -50,
-      height: 0,
-    },
-  });
-
+export default function AnimatedList({ items = [], getKeys, renderItem, ...restProps }) {
   return (
-    <div {...restProps}>
-      {trail.map(({ x, height, ...rest }, index) => (
-        <animated.div
-          key={index}
-          style={{
-            ...rest,
-            transform: x.interpolate(x => `translate3d(0, ${x}px, 0)`),
-          }}>
-          <animated.div style={{ height }}>
-            {children[index]}
-          </animated.div>
-        </animated.div>
-      ))}
-    </div>
+    <ul {...restProps}>
+      <Trail
+        items={items}
+        keys={getKeys}
+        config={{ mass: 5, tension: 2000, friction: 200 }}
+        from={{
+          opacity: 0,
+          x: -50,
+          height: 0,
+        }}
+        to={{
+          opacity: 1,
+          x: 0,
+          height: 'fit-content',
+        }}
+      >
+        {item => style => (
+          <animated.li style={style}>
+            {renderItem ? renderItem(item) : item}
+          </animated.li>
+        )}
+      </Trail>
+    </ul>
   )
 }

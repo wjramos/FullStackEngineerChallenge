@@ -1,7 +1,8 @@
 import React, {useContext, useEffect} from 'react';
 import styled from "@emotion/styled";
+import { Link } from "react-router-dom";
 
-import { UserContext } from "../../App";
+import UserContext from "../../context/UserContext";
 
 const isDev = process.env.NODE_ENV !== 'development';
 
@@ -16,6 +17,7 @@ const HeaderContainer = styled.header`
   padding: 0 8px;
   border-bottom: 1px solid #ccc;
   margin-bottom: 32px;
+  z-index: 1000;
 `;
 
 const Logo = styled.div`
@@ -33,9 +35,11 @@ export default function Header() {
 
   return (
     <HeaderContainer>
-      <Logo>
-        <h2>Company</h2>
-      </Logo>
+      <Link to="/employee">
+        <Logo>
+          <h2>Company</h2>
+        </Logo>
+      </Link>
 
       {isDev && (
         <label>
