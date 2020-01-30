@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import queryString from 'querystring';
 import styled from "@emotion/styled";
 
-import {Link, RouteLink} from "../../components/Typography";
+import {Link, RouteLink} from "../../components/typography";
 import Loader from "../../components/Loader";
 import fetchWithRetry from "../../utils/fetchWithRetry";
 import {EMPLOYEE_ENDPOINT, REVIEW_ENDPOINT} from "../../constants/endpoints";
@@ -11,6 +11,7 @@ import Card from "../../components/Card";
 import CreateUpdateEmployee from "../../components/CreateUpdateEmployee";
 import ReviewForm from "./ReviewForm";
 import UserContext from "../../context/UserContext";
+import ReviewsList from "./ReviewsList";
 
 const EmployeeDetails = styled.div`
   text-align: center;
@@ -19,8 +20,8 @@ const EmployeeDetails = styled.div`
 export default function Employee() {
   const { user } = useContext(UserContext);
   const [isEditing, setEditing] = useState(false);
-  const [employee, setEmployee] = useState(null);
-  const [reviews, setReviews] = useState(null);
+  const [employee, setEmployee] = useState([]);
+  const [reviews, setReviews] = useState([]);
   const { employeeId } = useParams();
 
   const employeeIdInt = parseInt(employeeId, 10);
@@ -51,7 +52,6 @@ export default function Employee() {
     } catch(e) {
       console.error(e);
     }
-
   }, [setReviews, employeeId, user]);
 
   // Fetch employee
@@ -113,33 +113,11 @@ export default function Employee() {
         )}
       </EmployeeDetails>
 
-      {reviews && reviews.length > 0 && (
-        <div>
-          <h2>{!canManage && 'Your '}Reviews</h2>
-          <ul>
-            {reviews.map(review => (
-              <li key={`${review.id}-${review.updatedAt}`}>
-                <Card>
-                  {!canManage && user === review.assignedId ? (
-                    <ReviewForm review={review} onComplete={fetchReviews} />
-                  ) : (
-                    <>
-                      <h3>
-                        <RouteLink to={`/employee/${review.assignedId}`}>
-                          Employee #{review.assignedId}
-                        </RouteLink>
-                      </h3>
-                      <p>
-                        {review.feedback || (<strong>Pending Review</strong>)}
-                      </p>
-                    </>
-                  )}
-                </Card>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+      <ReviewsList
+        employeeId={employeeIdInt}
+        reviews={reviews}
+        onSubmit={fetchReviews}
+      />
     </>
   );
 }

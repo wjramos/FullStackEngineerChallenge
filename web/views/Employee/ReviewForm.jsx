@@ -1,15 +1,24 @@
 import React, {useCallback, useState} from 'react';
+import styled from "@emotion/styled";
 
 import Input from "../../components/Input";
 import Button from "../../components/Button";
 import fetchWithRetry from "../../utils/fetchWithRetry";
 import {REVIEW_ENDPOINT} from "../../constants/endpoints";
 import {FlexRow} from "../../components/layout";
-import {Link} from "../../components/Typography";
+import {Link} from "../../components/typography";
+
+const FormButtonRow = styled(FlexRow)`
+  margin-top: 32px;
+`;
 
 export default function ReviewForm({ review, onComplete }) {
   const [isEditing, setEditing] = useState(!review.feedback);
   const [feedback, setFeedback] = useState(review.feedback || '');
+
+  const toggleEdit = useCallback(() => {
+    setEditing(!isEditing);
+  }, [isEditing, setEditing]);
 
   const submitReview = useCallback(async () => {
     try {
@@ -18,22 +27,20 @@ export default function ReviewForm({ review, onComplete }) {
         feedback,
       });
 
+      toggleEdit();
+      setFeedback(review.feedback || '');
+
+      console.log(result)
       onComplete && onComplete(result);
     } catch (e) {
       // @TODO error handling
       console.error(e);
     }
-  }, [feedback]);
-
-  const toggleEdit = useCallback(() => {
-    setEditing(!isEditing);
-    setFeedback(review.feedback || '');
-  }, [isEditing, setEditing, review, setFeedback]);
+  }, [feedback, toggleEdit, setFeedback]);
 
   const onSubmit = useCallback(() => {
     submitReview();
-    toggleEdit();
-  }, [submitReview, toggleEdit]);
+  }, [submitReview]);
 
   return (
     <>
@@ -49,7 +56,7 @@ export default function ReviewForm({ review, onComplete }) {
         </p>
       )}
 
-      <FlexRow>
+      <FormButtonRow>
         {isEditing ? (
           <>
             <Link onClick={toggleEdit} color="#f00">Cancel</Link>
@@ -64,7 +71,7 @@ export default function ReviewForm({ review, onComplete }) {
           </Button>
         )}
 
-      </FlexRow>
+      </FormButtonRow>
     </>
   );
 }

@@ -15,13 +15,26 @@ export default function fetchWithRetry(url, method = 'GET', body = {}) {
       return result;
     }
 
-    fetchData.then(resolve).catch(() => {
-      console.info('Retrying request…');
+    async function fetchRetry() {
+      try {
+        const result = await fetchData();
 
-      // Try request again after half a second
-      setTimeout(() => {
-        fetchData.then(resolve).catch(reject);
-      }, 500);
-    });
+        resolve(result);
+      } catch (err) {
+        console.info('Retrying request…');
+
+        setTimeout(async () => {
+          try {
+            const result = await fetchData();
+
+            resolve(result);
+          } catch (e) {
+            reject(e);
+          }
+        }, 500);
+      }
+    }
+
+    fetchRetry();
   });
 }

@@ -17,7 +17,7 @@ app.get('/employee', async (req, res) => {
 
     return res.json(employees);
   } catch(e) {
-    res.end(404).send('No employees found');
+    return res.status(404).send('No employees found');
   }
 });
 
@@ -25,13 +25,13 @@ app.get('/employee/:id', async (req, res) => {
   const { id } = req.params;
 
   try {
-    const employee = await Employee.findOne({
+    const { dataValues: employee } = await Employee.findOne({
       where: { id },
     });
 
     return res.json(employee);
   } catch(e) {
-    res.end(404).send('No employee found');
+    return res.status(404).send('No employee found');
   }
 });
 
@@ -56,9 +56,9 @@ app.put('/employee', async (req, res) => {
       employee = await Employee.create(req.body);
     }
 
-    res.json(employee);
+    return res.json(employee.dataValues);
   } catch(e) {
-    res.end(404).send('No employee found');
+    return res.status(404).send('No employee found');
   }
 });
 
@@ -70,9 +70,9 @@ app.delete('/employee', async (req, res) => {
       where: { id },
     });
 
-    res.json({});
+    return res.json({});
   } catch(e) {
-    res.end(404).send('No employee found');
+    return res.status(404).send('No employee found');
   }
 });
 
@@ -80,13 +80,13 @@ app.get('/employee/:employeeId', async (req, res) => {
   const { employeeId: id } = req.params;
 
   try {
-    const employee = await Employee.findOne({
+    const { dataValues: employee } = await Employee.findOne({
       where: { id },
     });
 
     return res.json(employee);
   } catch(e) {
-    res.end(404).send('No employee found');
+    return res.status(404).send('No employee found');
   }
 });
 
@@ -95,12 +95,14 @@ app.get('/review', async (req, res) => {
 
   try {
     const reviews = await Review.findAll({
-      where: { assignedId },
+      where: {
+        ...(assignedId ? { assignedId } : {}),
+      },
     });
 
     return res.json(reviews);
   } catch(e) {
-    res.end(404).send('No reviews found');
+    return res.status(404).send('No reviews found');
   }
 });
 
@@ -118,7 +120,17 @@ app.get('/review/:employeeId', async (req, res) => {
 
     return res.json(reviews);
   } catch (e) {
-    res.end(404).send('No reviews found');
+    return res.status(404).send('No reviews found');
+  }
+});
+
+app.put('/review', async (req, res) => {
+  try {
+    const review = await Review.create(req.body);
+
+    return res.json(review.dataValues);
+  } catch (e) {
+    return res.status(404).send('No reviews found');
   }
 });
 
@@ -137,9 +149,9 @@ app.patch('/review', async (req, res) => {
       where: { employeeId, assignedId },
     });
 
-    res.send(review);
+    return res.json(review);
   } catch (e) {
-    res.end(404).send('No reviews found');
+    return res.status(404).send('No reviews found');
   }
 });
 

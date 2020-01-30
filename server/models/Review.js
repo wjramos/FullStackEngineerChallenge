@@ -6,11 +6,11 @@ class Review extends Sequelize.Model {}
 Review.init(
   {
     employeeId: {
-      type: Sequelize.NUMBER,
+      type: Sequelize.INTEGER,
       allowNull: false,
     },
     assignedId: {
-      type: Sequelize.NUMBER,
+      type: Sequelize.INTEGER,
       allowNull: false,
     },
     feedback: {

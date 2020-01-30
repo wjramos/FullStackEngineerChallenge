@@ -8,8 +8,12 @@ import AnimatedList from "../AnimatedList";
 import Input from "../Input";
 import Card from "../Card";
 import Loader from "../Loader";
-import {Link} from "../Typography";
+import {Link} from "../typography";
 import {FlexRow} from "../layout";
+
+const FormButtonRow = styled(FlexRow)`
+  margin-top: 32px;
+`;
 
 const CreateEmployeeWrapper = styled(Card)`
   max-width: 500px;
@@ -94,12 +98,13 @@ export default function CreateUpdateEmployee({ onComplete, onCancel, initialValu
         {pending ? (
           <Loader />
         ) : (
-          <FlexRow>
+          <FormButtonRow>
             {onCancel && <Link onClick={onCancel} color="#f00">Cancel</Link>}
+
             <FormButton onClick={onSubmit} disabled={Object.values(form).some(value => !value)}>
               {isCreating ? 'Create' : 'Update'}
             </FormButton>
-          </FlexRow>
+          </FormButtonRow>
         )}
       </CreateEmployeeWrapper>
     );

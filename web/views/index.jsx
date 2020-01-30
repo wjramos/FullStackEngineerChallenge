@@ -1,6 +1,5 @@
 import React, { useContext } from 'react';
 import {
-  BrowserRouter as Router,
   Switch,
   Route,
   Redirect,
@@ -67,10 +66,6 @@ export default function AppRouter() {
 
       <PrivateRoute path="/employee">
         <Employees />
-      </PrivateRoute>
-
-      <PrivateRoute path="/review/:reviewId">
-        {/*<Review />*/}
       </PrivateRoute>
 
       <PrivateRoute path="/review">

@@ -13,10 +13,10 @@ export default function App() {
     <Router>
       <GlobalStyles />
 
-      <UserContext value={{ user, setUser }}>
+      <UserContext.Provider value={{ user, setUser }}>
         <Header />
         <AppRouter />
-      </UserContext>
+      </UserContext.Provider>
     </Router>
   );
 }
